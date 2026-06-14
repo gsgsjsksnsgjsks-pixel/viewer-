@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0d0d0d">
+<title>مشاهد خاص</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
+:root{--bg:#0d0d0d;--surface:#181818;--card:#202020;--border:#2a2a2a;--accent:#e8192c;--accent2:#ff6b35;--text:#f0f0f0;--muted:#888}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.logo{display:flex;align-items:center;gap:8px;font-weight:900;font-size:1.05rem}
+.logo-icon{width:32px;height:32px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.badge{font-size:.62rem;background:rgba(232,25,44,.15);border:1px solid rgba(232,25,44,.35);color:var(--accent);padding:2px 8px;border-radius:20px;font-weight:700}
+.blur-toggle{display:flex;align-items:center;gap:6px;cursor:pointer;background:var(--card);border:1px solid var(--border);padding:6px 12px;border-radius:25px;font-size:.78rem;font-weight:600;transition:all .2s;touch-action:manipulation}
+.blur-toggle.active{border-color:var(--accent2);background:rgba(255,107,53,.12)}
+.dot{width:30px;height:17px;background:var(--border);border-radius:9px;position:relative;transition:background .25s;flex-shrink:0}
+.blur-toggle.active .dot{background:var(--accent2)}
+.dot::after{content:'';position:absolute;width:11px;height:11px;background:#fff;border-radius:50%;top:3px;right:3px;transition:transform .25s}
+.blur-toggle.active .dot::after{transform:translateX(-13px)}
+.search-wrap{padding:16px;max-width:860px;margin:0 auto}
+.search-box{display:flex;background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:border-color .2s}
+.search-box:focus-within{border-color:var(--accent)}
+.search-box input{flex:1;background:transparent;border:none;outline:none;padding:13px 16px;color:var(--text);font-family:'Cairo',sans-serif;font-size:.9rem;direction:rtl;min-width:0}
+.search-box input::placeholder{color:var(--muted)}
+.search-btn{background:var(--accent);border:none;padding:0 18px;cursor:pointer;color:#fff;font-size:.9rem;flex-shrink:0;font-weight:700;font-family:'Cairo',sans-serif;touch-action:manipulation;white-space:nowrap}
+.search-btn:active{background:#c4142a}
+.quick-btns{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.qbtn{background:var(--card);border:1px solid var(--border);color:var(--text);padding:7px 14px;border-radius:8px;cursor:pointer;font-family:'Cairo',sans-serif;font-size:.78rem;touch-action:manipulation;transition:all .2s}
+.qbtn:active{border-color:var(--accent);color:var(--accent)}
+.error-box{display:none;margin:0 16px 10px;padding:12px 16px;background:rgba(232,25,44,.1);border:1px solid rgba(232,25,44,.4);border-radius:10px;font-size:.82rem;color:#ff8080;max-width:828px;margin-left:auto;margin-right:auto}
+.error-box.show{display:block}
+.player-wrap{max-width:860px;margin:0 auto;padding:0 16px;display:none}
+.player-container{position:relative;background:#000;border-radius:12px;overflow:hidden;aspect-ratio:16/9;border:1px solid var(--border)}
+.player-container iframe{width:100%;height:100%;display:block;border:none;position:absolute;top:0;left:0}
+.blur-overlay{position:absolute;inset:0;backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);display:none;align-items:center;justify-content:center;z-index:10;background:rgba(0,0,0,.45);cursor:pointer;border-radius:12px}
+body.blur-on .blur-overlay{display:flex}
+.blur-hint{text-align:center;background:rgba(0,0,0,.8);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:14px 20px;font-size:.82rem;color:#ccc}
+.blur-hint strong{display:block;font-size:1rem;color:#fff;margin-bottom:4px}
+.video-info{margin-top:12px;padding:14px;background:var(--card);border-radius:10px;border:1px solid var(--border);display:none}
+.video-info.visible{display:block}
+.video-title{font-size:.95rem;font-weight:700;margin-bottom:8px;line-height:1.4}
+.video-meta{display:flex;flex-wrap:wrap;gap:6px;font-size:.72rem;color:var(--muted)}
+.meta-tag{background:rgba(255,255,255,.05);padding:3px 9px;border-radius:6px}
+.placeholder{max-width:860px;margin:24px auto;padding:0 16px;text-align:center}
+.ph-box{background:var(--card);border:1px dashed var(--border);border-radius:16px;padding:44px 24px}
+.ph-icon{font-size:2.8rem;margin-bottom:12px;opacity:.4}
+.ph-box h2{font-size:1rem;font-weight:700;margin-bottom:8px}
+.ph-box p{color:var(--muted);font-size:.8rem;line-height:1.8}
+.pcards{max-width:860px;margin:16px auto 30px;padding:0 16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.pcard{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;display:flex;gap:10px;align-items:flex-start}
+.pcard-icon{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0}
+.g{background:rgba(34,197,94,.15)}.b{background:rgba(59,130,246,.15)}.o{background:rgba(255,107,53,.15)}.p{background:rgba(139,92,246,.15)}
+.pcard h3{font-size:.75rem;font-weight:700;margin-bottom:3px}
+.pcard p{font-size:.68rem;color:var(--muted);line-height:1.5}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">
+    <div class="logo-icon">▶</div>
+    مشاهد خاص
+    <span class="badge">🔒 بدون تتبع</span>
+  </div>
+  <div id="blurToggle" class="blur-toggle" onclick="toggleBlur()">
+    <span>🙈 تمويه</span>
+    <div class="dot"></div>
+  </div>
+</header>
+
+<div class="search-wrap">
+  <div class="search-box">
+    <input id="urlInput" type="url" inputmode="url"
+      placeholder="الصق رابط يوتيوب هنا..."
+      onkeydown="if(event.key==='Enter'){event.preventDefault();loadVideo()}">
+    <button class="search-btn" onclick="loadVideo()">▶ تشغيل</button>
+  </div>
+  <div class="quick-btns">
+    <button class="qbtn" onclick="pasteAndLoad()">📋 لصق وتشغيل</button>
+    <button class="qbtn" onclick="openInYT()">🔗 فتح في يوتيوب</button>
+  </div>
+</div>
+
+<div class="error-box" id="errorBox"></div>
+
+<div class="player-wrap" id="playerWrap">
+  <div class="player-container" id="playerContainer">
+    <div id="playerDiv"></div>
+    <div class="blur-overlay" onclick="toggleBlur()">
+      <div class="blur-hint">
+        <strong>🙈 التمويه مفعّل</strong>
+        اضغط هنا لإيقاف التمويه
+      </div>
+    </div>
+  </div>
+  <div class="video-info" id="videoInfo">
+    <div class="video-title" id="videoTitle"></div>
+    <div class="video-meta">
+      <div class="meta-tag">🔒 بدون تتبع</div>
+      <div class="meta-tag">🚫 لا تُحسب كمشاهدة</div>
+    </div>
+  </div>
+</div>
+
+<div class="placeholder" id="placeholder">
+  <div class="ph-box">
+    <div class="ph-icon">🎬</div>
+    <h2>مشاهدة يوتيوب بخصوصية كاملة</h2>
+    <p>الصق رابط يوتيوب ← اضغط تشغيل<br>
+    بدون تسجيل مشاهدة · بدون تتبع · مع تمويه المحتوى</p>
+  </div>
+</div>
+
+<div class="pcards">
+  <div class="pcard"><div class="pcard-icon g">🚫</div><div><h3>لا تُحسب كمشاهدة</h3><p>يستخدم youtube-nocookie.com</p></div></div>
+  <div class="pcard"><div class="pcard-icon b">🍪</div><div><h3>بدون تتبع</h3><p>لا ملفات تعريف ارتباط
